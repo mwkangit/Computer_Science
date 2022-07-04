@@ -635,6 +635,140 @@ TCP를 사용하며 Stateless로 과거의 클라이언트의 요청과 정보�
 
 
 
+# Network Security
+
+
+
+## IDS
+
+- 칩입탐지시스템이다.
+- 내, 외부망의 접속점에 위치하여 방화벽의 부족한 부분을 보강하기 위해 사용되는 침입탐지 시스템이다.
+- 관리자에게 경고음으로 알려주고 엑세스 로그를 확인하여 해결한다.
+- 방화벽보다 앞단에 배치되며 부정한 엑세스는 시그니처(Signature)라고 불리는 공격 패턴 데이터베이스를 사용한다.
+- 단점 : 부정한 엑세스를 탐지하고 알리는 용도일 뿐이며 공격을 막지는 않는다. 즉, 관리자가 공격 로그를 확인해서 보안 제어를 해야한다. 또한, 변형 패턴은 탐지하기 어렵다.
+
+
+
+## IPS
+
+- 침입방지시스템이다.
+- 즉, IDS + 침입방지를 한 것이다.
+- 침입을 탐지하며 막는 역할을 한다. 방화벽은 IP주소 또는 포트에 의해 네트워크 공격을 차단할 수 있지만 IPS는 응용프로그램 수준의 공격과 패턴에 대해서 대응할 수 있다. 즉, 시그니처를 참조하여 부정한 액세스에 해당하는 패킷을 차단하거나 세션을 끊어 즉시 방어한다.
+- 실시간으로 탐지하는 것 뿐 아니라 알려지지않은 공격까지도 방어할 수 있는 침입방지 시스템이다.
+- Mirror 방식 : 스위치나 TAP이라는 장치를 이용하여 패킷을 전달 받아 탐지하는 방식으로 IPS도 차단이 불가능하다.
+- Inline 방식 : 네트워크 통로에 직접적으로 배치되어 패킷을 직접 관리하는 방식이다. IPS를 통과하는 패킷 중 비정상적이거나 악용 된 패킷은 차단한다.
+- 단점 : 과도한 오탐과 차단으로 인해 탐지 모드로 전환하여 사용하는 곳이 많다. 또한, 장비가 고가다.
+
+비교
+
+![img](https://blog.kakaocdn.net/dn/NReN7/btqHb0yiwqn/Jltjchy1fLq2FK5Rnv2K0K/img.png)
+
+![img](https://t1.daumcdn.net/cfile/tistory/999FF04E5C51E74405)
+
+[IDS / IPS1](https://work-01.tistory.com/162)
+
+[IDS / IPS2](https://run-it.tistory.com/47)
+
+
+
+## Firewall
+
+- 인터넷 등의 외부 네트워크로부터 사내 네트워크 등이 내부 네트워크로의 허가되지 않은 부정한 엑세스를 방지하는 시스템이다.
+- 외부에서 발생되는 트래픽은 차단하며 내부에서 외부로 발생된 트래픽의 반환은 허용한다.
+- 레거시 방화벽에서 허용에 대한 설정이 없을 경우 외부 네트워크 패킷은 내부 네트워크로 도달 불가하다.
+- 단점 : 일반적인 방화벽은 패킷이 불순, 악의를 갖고 있는 트래픽인지 아닌지 확인할 수 없다. 즉, 악의적인 GET요청 등을 보고 막을 수 없다. DoS공격, 웜(Warm)은 막을 수 없다. 또한, 내부자의 공격에 취약하며 네트워크 병목 현상이 발생할 수 있다.
+
+[Firewall, IDS, IPS, DMZ](https://skstp35.tistory.com/193)
+
+
+
+## CORS
+
+- 클라이언트 애플리케이션과 다른 origin을 가진 서버 애플리케이션이 서로 통신할 수 있도록 허용하는 프로토콜이다.
+- 다른 origin이란 예를 들어 클라이언트 애플리케이션은 `www.mysite.com`으로 올라가 있는 반면 서버 애플리케이션은 `www.serverapi.com`으로 올라가 있다고 했을 때 클라이언트와 서버 애플리케이션은 다른 origin을 가졌다고 한다.
+- Same Origin Policy : 클라이언트와 서버가 같은 origin을 가진 경우에 통신하는 것이다. 클라이언트와 서버의 origin이 달라도 통신을 무조건 허용하면 클라이언트에서 악의적으로 서버에 접근할 가능성이 너무 높다. 즉, 보안을 위해 같은 origin일 때만 통신하게 하는 것이다.
+- 클라이언트의 크기가 커지면서 클라이언트는 클라언트대로 별도로 관리하기 위해 별도의 origin을 가지게 되었으며 서버의 origin과 다르게 되었다. 이래서 서로 다른 origin에서 통신이 가능한 CORS가 탄생했다.
+- CORS가 없이 모든 곳에서 데이터를 요청할 수 있게 되면, 다른 사이트에서 원래 사이트를 흉내낼 수 있게 된다. 동일한 로그인 서비스를 만들고 세션을 탈취할 가능성도 있다.
+
+- 작동 원리
+  - 기본적으로 웹은 다른 출처의 리소스를 요청할 때 HTTP 프로토콜을 사용하여 요청하는데 이때 브라우저는 요청 헤더(request header)에 origin 필드에 요청을 보내는 출처를 담아 전송한다.
+  - 서버는 응답 헤더(response header)에 `Access-Control-Allow-Origin`이라는 값에 `이 리소스를 접근하는 것이 허용된 출처`를 내려준다.
+  - 이후 응답을 받은 브라우저는 자신이 보냈던 요청의 origin과 서버가 보내준 응답을 비교해 본 후 이 응답이 유효한 응답인지 아닌지 결정한다.
+
+
+
+### Simple Request
+
+- Preflight과 다르게 예비 요청을 보내지 않고 서버에게 바로 본 요청을 전송한다.
+
+
+- 이후 서버가 응답 헤더에 `Access-Control-Allow-Origin`과 같은 값을 보내주면 그때 브라우저가 CORS 정책 위반 여부를 검사하는 방식이다.
+- GET, HEAD, POST 메소드 중 하나이다.
+- **`Accept`**, **`Accept-Language`**, **`Content-Language`**, **`Content-Type`**, **`DPR`**, **`Downlink`**, **`Save-Data`**, **`Viewport-Width`**, **`Width`** 외의 다른 헤더를 사용하면 안된다. **`Authorization`** 헤더만 추가해도 조건을 지키지 않는 것이다. 
+- **`Content-Type`**를 사용하는 경우에는 **`application/x-www-form-urlencoded`**, **`multipart/form-data`**, **`text/plain`**만 허용된다.
+
+
+
+### Preflight Request
+
+- Preflight 방식은 요청을 한번에 보내는 것이 아니라 예비 요청과 본 요청을 나누어서 서버로 전송한다.
+- 본 요청을 보내기 전 미리 예비로 보내는 요청을 Preflight라고 하며 HTTP 메소드 중 하나인 `OPTIONS` 메소드를 사용한다.
+- 예비 요청을 함으로써 본 요청을 보내기 전 브라우저 스스로가 요청을 보내는 것에 대한 안전성을 혹인함에 있다.
+- 서버는 예비 요청에 대한 응답으로 현재 자신이 어떤 것들을 허용하고 어떤 것들을 금지하고 있는지에 대한 정보를 응답 헤더에 담아서 브라우저에게 다시 보내준다.
+- 이때 `origin`, `Access-Control-Request-Method`, `Access-Control-Request-Headers`를 서버로 전송한다.
+- **`Access-Control-Allow-Origin: *`** 이면 안되며, **명시적인 URL**을 설정하여햐 한다.
+- 응답 헤더에는 반드시 **`Access-Control-Allow-Credentials: true`**가 존재해야한다.
+
+[CORS1](https://hannut91.github.io/blogs/infra/cors)
+
+[CORS2](https://velog.io/@pilyeooong/CORS%EB%9E%80-%EB%AC%B4%EC%97%87%EC%9D%B8%EA%B0%80)
+
+
+
+# Load Balancing
+
+여러 서버가 분산 처리 하는 것을 로드 밸런싱이라고 한다.
+
+- Scale-Up : 서버 자체의 성능을 높이는 것이다.
+- Scale-Out : 여러 대의 서버를 두는 것이다.
+- CLB(Classic Load Balancer)은 인스턴스간에 간단한 트래픽 부하 분산하는 로드 밸런서지만 잘 사용하지 않는다.
+
+
+
+## ALB
+
+- Application Load Balancer로 L7 Application Layer 로드 밸런서를 지원한다.
+- ALB는 HTTP/HTTPS 프로토콜의 헤더를 보고 적절한 패킷으로 전송한다.
+- ALB는 IP주소 + 포트번호 + 패킷 내용을 보고 스위칭한다.
+- ALB는 IP 주소가 변동되기 때문에 클라이언트에서 Access 할 ELB의 DNS Name을 이용해야 한다.
+- ALB는 L7단을 지원하기 때문에 SSL 적용이 가능하다.
+
+
+
+## NLB
+
+- Network Load Balancer는 L4 Network Layer 로드 밸런서를 지원하다.
+- NLB는 TCP/IP 프로토콜의 헤더를 보고 적절한 패킷으로 전송한다.
+- NLB는 IP + 포트번호를 보고 스위칭 한다.
+- NLB는 할당한 Elastic IP를 Static IP로 사용이 가능하여 DNS Name과 IP주소 모두 사용 가능하다.
+- NLB는 SSL 적용이 인프라 단에서 불가능하여 애플리케이션에서 따로 적용해 주어야 한다.
+
+[Load Balancing1](https://dev.classmethod.jp/articles/load-balancing-types-and-algorithm/)
+
+[Load Balancing2](https://velog.io/@jisoo1170/Load-Balancing%EC%9D%B4%EB%9E%80)
+
+
+
+
+
+
+
+[네트워크 면접1](https://dev-coco.tistory.com/161)
+
+[네트워크 면접2](https://juicyjerry.tistory.com/196)
+
+- Web Storage, CORS(same-origin, origin)
+
 SMTP,FTP 원리
 
 Huffman
