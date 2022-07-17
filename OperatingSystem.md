@@ -361,12 +361,226 @@ Ready Queue에 들어간 순서대로 실행을 하는데 이를 우선순위에
 
 ### TLB
 
-TLB는 Key(또는 tag), Value의 두 가지 값을 저장한다. 어떤 항목이 메모리에 제시된다면 그 항목은 모든 key들에 대해 동시에 비교된다.
+TLB는 Key(또는 tag), Value의 두 가지 값을 저장한다. 어떤 항목이 메모리에 제시된다면 그 항목은 모든 key들에 대해 동시에 비교된다. 캐시라고 생각하면 된다.
 
 - TLB에서 페이지 번호를 발견했다면 (TLB Hit) 해당하는 프레임 번호는 즉시 사용가능하며 메모리 접근 가능하다.
 - 페이지 번호가 TLB에 발견되지 않았다면 (TLB Miss) 그 페이지 테이블에 대한 메모리 참조가 만들어지며 TLB에 업데이트 된다.
+- TLB에 매핑이 존재하지 않는다면 MMU(페이지 테이블)가 페이지 테이블에서 해당되는 물리 주소로 변환 후 메모리에 접근하게 된다.
+- 캐시 메모리는 속도가 빠른 장치와 느린 장치 사이에서 속도 차에 따른 병목 현상을 줄이기 위한 범용 메모리이다.
 
 
+
+## Virtual Memory
+
+어떤 프로세스가 실행될 때 메모리에 해당 프로세스 전체가 올라가지 않고 일부만 올라가서 실행가능하게 하는 것이며 실제 메모리보다 많아 보이게 하는 기술이다.
+
+- 애플리케이션이 실행될 때 실행에 필요한 부분만 메모리에 올라가며 나머지는 디스크에 남는다. 즉, 디스크가 RAM의 보조 기억장치처럼 작동하는 것이다.
+- 가상 메모리를 구현하기 위해서는 특부 메모리 관리 하드웨이인 MMU(Memory Management Unit)이 필요하다. MMU는 페이지 테이블이라고 생각하면 된다.
+- MMU는 가상주소를 물리주소로 변환하고 메모리를 보호하는 기능을 수행한다.
+- MMU를 사용하면 CPU가 각 메모리에 접근하기 이전에 메모리 주소 번역 작업이 수행된다.
+
+
+
+### Demand Paging
+
+요구 페이징은 CPU가 요청할 때 프로세스의 데이터를 메모리에 올리는 것을 의미한다. 즉, 처음부터 모든 데이터를 메모리로 적재하지는 않는다.
+
+
+
+### Page Faults
+
+페이지 폴트란 어떤 페이지에 접근하려고 했을 때 해당 페이지가 실제 물리 메모리에 부재할 때 뜨는 인터럽트이며 페이지 폴트가 발생하면 운영체제가 이를 해결한 뒤 다시 동일한 명령을 수행하는 식으로 동작한다.
+
+- 페이지 폴트 시 운영체제는 그 데이터를 메모리로 가져와서 마치 페이지 폴트가 전혀 발생하지 않은 것처럼 프로그램이 계속적으로 작동하게 한다.
+- 페이지 폴트가 일어나면 성능이 저하되기 때문에 메모리가 꽉 차있을 경우 페이지 교체 정책(page replacement policy)를 이용한다. 어떠한 것을 교체할지에 대한 알고리즘이다.
+
+[Virtual Memory](https://ahnanne.tistory.com/15)
+
+
+
+## Deadlock
+
+일련의 프로세스들이 서로가 가진 자원(resource)를 기다리며 block된 상태이다.
+
+
+
+### Deadlock Condition
+
+- Mutual Exclusion (상호 배제)
+  - 매 순간 하나의 프로세스만이 자원을 사용할 수 있다. 사용 중인 자원을 다른 프로세스가 사용하기 위해서는 해당 자원이 해제될 때까지 기다려야 한다.
+- No Preemption (비선점)
+  - 이미 할당된 자원을 강제로 빼앗을 수 없다.
+- Hold and Wait (점유 대기)
+  - 자원을 가진 프로세스가 다른 자원을 기다릴 때 보유 자원을 놓지 않고 계속 가지고 있다.
+- Circular Wait (순환 대기)
+  - 자원을 기다리는 프로세스간에 사이클이 형성되어야 한다. 대기 프로세스의 집합이 순환 형태로 대기하고 있어야 한다.
+
+
+
+### Deadlock Handling
+
+Deadlock을 처리하는 4가지 방법이 있다.
+
+
+
+#### Deadlock Prevention
+
+Deadlock 발생 조건 4가지 중 하나라도 발생하지 않게 하는 방법이며 각각의 조건을 부정해서 deadlock 발생 가능성을 차단한다.
+
+- Mutual Exclusion 부정
+  - 한 번에 여러 프로세스가 공유 자원을 사용할 수 있게 한다.
+  - 단점 : 추후 동기화 관련 문제 발생 가능하다.
+- No Preemption 부정
+  - 이미 다른 프로세스에서 할당된 자원이 선점권이 없다고 가정할 때, 높은 우선순위의 프로세스가 해당 자원을 선점할 수 있도록 한다.
+  - 모든 필요한 자원을 얻을 수 있을 때, 그 프로세스는 다시 시작된다.
+  - State를 쉽게 save하고 restore할 수 있는 자원에서 주로 사용한다(CPU, memory).
+- Hold and Wait 부정
+  - 프로세스 실행에 필요한 모든 자원을 한꺼번에 요구하고 허용할 때까지 작업을 보류해서 나중에 또 다른 자원을 점유하기 위한 대기 조건을 성립하지 않도록 한다.
+  - 방법 1) 프로세스 시작 시 모든 필요한 자원을 할당받게 하는 방법이다.
+  - 방법 2) 자원이 필요한 경우 보유 자원을 모두 놓고 다시 요청한다.
+- Circuit Wait 부정
+  - 자원을 순환 형태로 대기하지 않도록 일정한 한쪽 방향으로만 자원을 요구할 수 있도록 한다.
+  - 모든 자원 유형에 할당 순서를 정하여 정해진 순서대로만 자원을 할당한다.
+  - Ex) 순서가 3인 자원 Ri를 보유 중인 프로세스가 순서가 1인 자원 Rj를 할당받기 위해서는 우선 Ri를 release 해야 한다.
+- 단점 : 효율성과 처리량을 감소시키고 Starvation이 발생할 수 있다.
+
+
+
+#### Deadlock Avoidance
+
+Deadlock이 발생할 가능성이 있는 경우엔 아예 자원을 할당하지 않는 방법이다.
+
+- 자원 요청에 대한 부가적인 정보를 이용해서 deadlock으로부터 안전(safe)한지를 동적으로 조사해서 안전한 경우(deadlock의 가능성 없는 경우)에만 할당한다.
+- 가장 단순하고 일반적인 모델은 프로세스들이 필요로 하는 각 자원별 최대 사용량을 미리 선언하도록 하는 방법이다.
+- 시스템 state가 원래 state로 돌아올 수 있는 경우에만 자원을 할당한다.
+
+
+
+##### Safe State
+
+시스템 내의 프로세스들에 대한 safe sequence가 존재하는 상태이다. 즉, safe sequence를 만족하는 것이다.
+
+
+
+##### Safe Sequence
+
+- 프로세스의 sequence <P1, P2, ... , Pn> 이 safe하려면 Pi (1 <= i <= n)의 자원 요청이 **가용 자원 + 모든 Pj(j < i)의 보유 자원**에 의해 충족되어야 한다.
+- 조건을 만족하면 다음 방법으로 모든 프로세스의 수행을 보장한다.
+  - Pi의 자원 요청이 즉시 충족될 수 없으면 모든 Pj(j < i)가 종료될 때까지 기다린다.
+  - P(i-1)이 종료되면 Pi의 자원 요청을 만족시켜 수행한다.
+- 시스템이 safe state에 있다면 no deadlock 이다.
+- 시스템이 unsafe state에 있다면 possibility of deadlock 이다.
+
+- Deadlock avoidance는 시스템이 unsafe state에 들어가지 않는 것을 보장한다.
+
+
+
+##### Resource Allocation Graph Algorithm
+
+Resource당 Single Instance 인 경우이다.
+
+![img](https://blog.kakaocdn.net/dn/cMCznT/btrfVqJ7pZW/tE8jDSofBmXCkTyKFRh5G0/img.png)
+
+- 점선으로 표시된 간선(claim edge)은 프로세스가 자원을 미래에 요청할 수 있음을 의미한다.
+- 해당 자원을 요청하는 경우 실선(Request Edge)으로 바뀌게 된다.
+- 자원을 할당받으면 방향이 반대인 간선(Assignment Edge)이 된다.
+- 만약 자원을 다 쓰고 반납하게 되면 다시 Claim Edge로 변한다.
+- Deadlock을 피하는 방법은, **Request Edge가 Assignment Edge로 변경될 때 점선을 포함하여 사이클이 생기지 않는 경우에만 요청된 자원을 할당**하는 것이다.
+- Cycle 생성 여부 조사 시 프로세스의 수가 n일때 O(n^2) 시간이 걸린다.
+
+
+
+##### Banker's Algorithm
+
+Resource당 Multi instances 인 경우이다.
+
+- 여러 인스턴스가 존재하는 경우엔 사이클만으로 판단할 수는 없다.
+- 이 알고리즘은 dijkstra가 고안했으며 프로세스가 자원을 요청할 때마다 수행된다.
+
+- 가정
+  - 모든 프로세스는 자원의 최대 사용량을 미리 명시한다.
+  - 프로세스가 요청 자원을 모두 할당받은 경우 유한 시간 안에 자원들을 다시 반납한다.
+- 기본개념은 자원 요청 시 safe 상태를 유지할 경우에만 할당한다.
+- 즉, **총 요청 자원의 수가 남은 자원의 수보다 적은 프로세스만 선택하여 수행한다**.
+
+- 위와 같은 프로세스가 없다면 unsafe한 것이다.
+- 할당받은 프로세스가 종료되면 모든 자원을 반납하고 모든 프로세스가 종료될 때까지 이 과정을 반복한다.
+- 4가지 자원이 있다.
+  - Available : 할당된 자원
+  - Max : 최대로 할당할 수 있는 자원 수
+  - Allocation : 이미 할당된 자원 수
+  - Need : 할당된 자원에서 최대로 가능한 수를 뺀 수 (Max-Allocation)
+- Available과 Need를 비교하여 Sequence를 구한다.
+- Available이 Need보다 크면 실행가능하며 실행 후에는 Allocation이 Available에 더해져 더 큰 Need를 가진 프로세스도 실행 가능하다.
+
+
+
+#### Deadlock Detection and Recovery
+
+Deadlock을 감지하는 것으로 Deadlock이 발생한 것에 대해서 회복을 시키는 정도로 한다.
+
+
+
+##### Detection
+
+- Resource type당 single instance인 경우
+  - 자원할당 그래프에서의 cycle이 곧 deadlock을 의미한다.
+- Resource type당 multiple instance인 경우
+  - Banker's algorithm과 유사한 방법 활용한다.
+
+
+
+##### Recovery
+
+- 프로세스를 종료시키거나 자원을 선점하는 방법을 이용한다.
+- 프로세스를 종료시킬 땐 Deadlock에 빠진 모든 프로세스를 종료하거나 Deadlock이 해결될 때까지 한번에 한 프로세스씩 종료시킬 수 있다.
+- 자원을 선점할 땐 어떤 프로세스를 종료시킬지 결정(selecting a victim)하고 Deadlock이 발생하기 전 상태로 돌아가(rollback) 프로세스를 재시작한다. 이때 동일한 프로세스가 계혹해서 victim으로 선정되는 경우 starvation이 발생할 수도 있다. 이는 rollback된 횟수를 저장하여 해결한다.
+
+
+
+#### Deadlock Ignorance
+
+Deadlock이 일어나지 않는다고 생각하고 아무런 조치도 취하지 않는 방식이다.
+
+- Deadlock이 매우 드물게 발생하기 때문에 Deadlock에 대한 조치 자체가 더 큰 오버헤드일 수 있기 때문이다.
+- Deadlock 발생 시 시스템이 비정상적으로 작동하는 것을 사람이 느낀 후 직접 프로세스를 죽여야 한다.
+- 대부분 UNIX, Windows 등 범용 운영체제가 채택하는 방식이다.
+
+[Deadlock1](https://velog.io/@ayoung0073/OS-Deadlock)
+
+[Deadlock2](https://rebro.kr/177)
+
+[Deadlock3](https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&blogId=klp0712&logNo=220882367147)
+
+
+
+## Blocking & Synchronous
+
+Blocking이면 반드시 Synchronous인 것이 아니고 Non-Blocking이면 반드시 Asynchronous인 것도 아니다.
+
+![img](https://blog.kakaocdn.net/dn/Ueit3/btribLlso0C/z37PUrQlllkF7D3MI5aqb1/img.gif)
+
+- Blocking : A 함수가 B 함수를 호출 할 때, B 함수가 자신의 작업이 종료되기 전까지 A 함수에게 제어권을 돌려주지 않는 것이다.
+
+![img](https://blog.kakaocdn.net/dn/Sx72z/btrmSa0SR6V/2U24S4GGcNX35yca0VZ1T0/img.jpg)
+
+- Non-Blocking : A 함수가 B 함수를 호출 할 때, B 함수가 제어권을 바로 A 함수에게 넘겨주면서, A 함수가 다른 일을 할 수 있도록 하는 것이다.
+
+![img](https://blog.kakaocdn.net/dn/cZF2B7/btrmMNS9sEd/WZZqNO2LWMSwqxUG0ZqSFK/img.jpg)
+
+- Blocking과 Non-Blocking의 차이는 다른 주체가 작업할 때 자신에게 자신의 작업에 대한 제어권이 있는지 없는지로 볼 수 있다.
+- Synchronous : A 함수가 B 함수를 호출 할 때, B 함수의 결과를 A 함수가 처리하는 것이다.
+
+![img](https://blog.kakaocdn.net/dn/bTu16H/btrmNn1rrvB/s6x8kgXpgaIiKgrKWe3Xh1/img.jpg)
+
+- Asynchronous : A 함수가 B 함수를 호출 할 때, B 함수의 결과를 B 함수가 처리하는 것이다. (callback)
+
+![img](https://blog.kakaocdn.net/dn/c0ma9m/btrmMgnYlBV/cRY4CVkDZlvdDjeWWZwi80/img.jpg)
+
+- Sync/Async의 차이점은 결과를 돌려주었을 때 순서와 결과에 관심이 있는지 없는지로 판단할 수 있다. Sync는 결과에 관심이 있는 것이고, Async는 그 결과에 크게 관심이 없는 것이다.
+- Spring MVC 프레임 워크는 Blocking / Sync 방식이다.
+
+[Blocking & Synchronous](https://studyandwrite.tistory.com/486?category=1004636) - 정리 중요
 
 
 
