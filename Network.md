@@ -98,7 +98,7 @@ pkt 전송 시 delay를 다룬다.
 
 Cross-Layer Optimization : 연상의 최적화를 위해 Layer 벽을 허무는 것이다.
 
-[OSI 7 Layer](https://onecoin-life.com/19)
+[OSI 7 	](https://onecoin-life.com/19)
 
 
 
@@ -773,6 +773,63 @@ TCP를 사용하며 Stateless로 과거의 클라이언트의 요청과 정보�
 [Load Balancing2](https://velog.io/@jisoo1170/Load-Balancing%EC%9D%B4%EB%9E%80)
 
 
+
+# JWT & Oauth
+
+- JWT는 토큰의 종류이고 OAuth는 토큰을 발급하고 인증하는 오픈 스탠다드 프로토콜이다.
+- OAuth의 accessToken은 bearer 토큰이다. Bearer 토큰은 유저 정보와 같은 명확한 정보를 가지고 있지 않은 토큰이다. 랜덤 문자열으로 일종의 pointer와 같은 개념이다. 이것으로 유저정보를 가져올 수 있다.
+- JWT는 토큰 자체에 유저 정보를 담고 있기 때문에 HTTP 헤더에 실어 전달함으로써 유저 세션을 유지할 필요가 없고 가볍게 데이터를 주고받을 수 있다.
+
+[JWT & Oauth](https://jeonyoungho.github.io/posts/JWT%EC%99%80-OAuth%EC%9D%98-%EA%B4%80%EA%B3%84/)
+
+
+
+# REST
+
+
+
+## REST
+
+- 자원을 이름으로 구분해 해당 자원의 상태를 주고 받는 모든 것을 의미한다.
+- 즉, 자원의 표현에 의한 상태 전달을 뜻한다.
+
+- REST는 기본적으로 웹의 기존 기술과 HTTP 프로토콜을 그대로 활용하기 때문에 웹의 장점을 최대한 활용할 수 있는 아키텍처 스타일이다.
+- Client, Server 사이 통신 방식 중 하나이다.
+- URI와 Method를 사용하여 요청을 보내며 자원을 특정한 형태(JSON)으로 표현한다.
+- URL : 인터넷 상 자원의 위치이다.
+- URI : 인터넷 상의 자원을 식별하기 위한 문자열의 구성이다.
+- 자원 : URI
+- 행위(verb) : Method
+- 표현 : JSON, XML, TEXT
+- 특징 : Server-Client, Stateless, Uniform Interface
+
+
+
+## REST API
+
+- REST의 특징을 기반으로 서비스 API를 구현한 것이다.
+- 각 요청이 어떤 동작이나 정보를 위한 것인지를 그 요청의 모습 자체로 추론이 가능한 것이다.
+- 조건
+  - URI는 정보의 자원을 표현해야 한다.
+  - 자원에 대한 행위는 HTTP Method로 표현한다. 행위는 표현하지 않는다.
+- 설계 규칙
+  - 동사 사용 금지
+  - 마지막에는 "/" 사용 금지
+  - "_" 대신 "-" 사용
+  - 소문자로만 구성
+  - 응답 상태코드 사용
+  - 파일 확장자는 URI에 포함 금지
+
+
+
+## RESTful API
+
+- RESTful은 REST의 설계 규칙을 잘 지켜서 설계된 API를 RESTful한 API라고 한다.
+- 즉, REST의 원리를 잘 따르는 시스템을 RESTful이란 용어를 지칭한다.
+
+
+
+[REST](https://dev-coco.tistory.com/m/97)
 
 
 
