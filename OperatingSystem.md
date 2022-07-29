@@ -109,6 +109,8 @@
 - 레지스터 : 누산기, 스택, 색인 레지스터
 - 프로세스 번호
 
+![img](https://blog.kakaocdn.net/dn/ctaq1H/btqDGIuW4aV/MFfKbQVdZLb2lsxG9k1SBk/img.png)
+
 
 
 ### Thread Control Block
@@ -227,6 +229,10 @@ Ready Queue에 들어간 순서대로 실행을 하는데 이를 우선순위에
 - 가장 먼저 온 프로세스부터 수행한다.
 - Convoy effect : short process가 long process 뒤에 있어서 시간 손해를 많이 본 경우이다.
 - 하나의 CPU bound process, 많은 I/O bound process(비교적 짧은)인 경우를 생각한다.
+- 장점
+  - 도착 순서에 따라 공평하여 starvation 다른 알고리즘에 비해 적다.
+  - 평균 응답시간이 길다.
+
 
 
 
@@ -241,6 +247,12 @@ Ready Queue에 들어간 순서대로 실행을 하는데 이를 우선순위에
 - Preemptive 경우 중간에 더 짧은 프로세스가 interrupt할 수 있으며 매 클락마다 짧은 것을 선택하게 된다.
 - Nonpreemptive 경우 arrival time 순으로 수행되고 이 후에 수행시간이 짧은 순으로 한다. 수행시간 같다면 먼저 하던 것을 계속 진행한다.
 - waiting time은 프로세스가 ready에서 기다리는 시간이다.
+- 장점
+  - 평균 응답 시가을 최소화할 수 있다.
+
+- 단점
+  - 실행시간이 긴 프로세스는 CPU를 할당받지 못하고 무한히 대기하는 현상이 발생한다(starvation).
+
 
 
 
@@ -264,6 +276,15 @@ Ready Queue에 들어간 순서대로 실행을 하는데 이를 우선순위에
 
 
 
+##### Shortest Remaining Time
+
+- "SRT" 라고 부른다.
+- 현재 실행 중인 프로세스의 남은 시간과 대기 큐에 프로세스의 실행시간이 가장 짧은 프로세스에게 CPU를 할당하는 기법이다(비선점 기법인 SJF 알고리즘의 선점 형태로 변경한 기법이다).
+- 단점
+  - 잦은 선점으로 인한 문맥교환의 부담, starvation의 위험이 있다.
+
+
+
 ##### Round Robin
 
 - "RR" 이라고 부른다
@@ -272,8 +293,25 @@ Ready Queue에 들어간 순서대로 실행을 하는데 이를 우선순위에
 - Time quantum q를 정하고(특정 프로세스가 정함) process가 q만큼 수행하고 빠지면서 수행되는 방식이다.
 - 전체 시간을 1/n로 분리하고 q만큼의 시간을 주고 interrupt, (n-1)q만큼 수행한다.
 - q가 작으면 context switching이 자주 일어나서 주의가 필요하다.
+- FCFS를 선점 형태로 변형한 기법이다.
 
 [CPU Scheduling](https://velog.io/@doyuni/%EC%9A%B4%EC%98%81%EC%B2%B4%EC%A0%9COS-5.-Scheduling)
+
+
+
+#### Preemptive
+
+CPU를 할당받아 실행 중인 프로세스로부터 CPU를 선점(빼앗는 것)하여 다른 프로세스를 할당 할 수 있는 방식이다.
+
+- Ex) `RR, SRT, MLQ, MLFQ`
+
+
+
+#### Non-Preemptive
+
+CPU를 할당받은 프로세스는 스스로 CPU를 반납할 때까지 CPU를 독점하여 사용한다.
+
+- Ex) `FCFS, SJR, HRN`
 
 
 
@@ -367,6 +405,80 @@ TLB는 Key(또는 tag), Value의 두 가지 값을 저장한다. 어떤 항목�
 - 페이지 번호가 TLB에 발견되지 않았다면 (TLB Miss) 그 페이지 테이블에 대한 메모리 참조가 만들어지며 TLB에 업데이트 된다.
 - TLB에 매핑이 존재하지 않는다면 MMU(페이지 테이블)가 페이지 테이블에서 해당되는 물리 주소로 변환 후 메모리에 접근하게 된다.
 - 캐시 메모리는 속도가 빠른 장치와 느린 장치 사이에서 속도 차에 따른 병목 현상을 줄이기 위한 범용 메모리이다.
+
+
+
+### Fragmentation
+
+"단편화" 라고 부른다.
+
+메모리의 빈 공간 또는 자료가 여러 개의 조각으로 나뉘는 현상을 말한다.
+
+- 할당한 메모리를 해제를 하게 되면 그 메모리 공간이 빈 공간(사용하지 않는 공간)이 되고 그 빈공간의 크기보다 큰 메모리는 사용할 수 없다.
+- 그리하여 이 공간들이 하나 둘 쌓이게 되면 수치상으로는 많은 메모리 공간이 남았음에도 불구하고 실제로 사용할 수 없는 메모리가 발생한다.
+
+
+
+#### External Fragment
+
+"외부 단편화" 라고 부른다.
+
+- 분할된 영역이 할당된 프로그램의 크기보다 작아서 모두 빈 공간으로 남아있는 전체 영역을 말한다.
+- 외부 단편화는 Segmentation에서 발생한다.
+
+
+
+#### Internal Fragment
+
+"내부 단편화" 라고 부른다.
+
+- 분할된 영역이 할당된 프로그램의 크기보다 커서 사용되지 않고 남아있는 빈 공간을 말한다.
+- 내부 단편화는 Paging에서 발생한다.
+
+
+
+#### Solution
+
+- 메모리 압축(디스크 조각 모음), 메모리 통합(단편화가 발생된 공간들을 하나로 통합시켜 큰 공간으로 만드는 기법)이 있다.
+
+
+
+[Paging](https://4legs-study.tistory.com/48)
+
+
+
+## Segmentation
+
+프로세스를 논리적 단위(세그먼트)로 잘라서 메모리에 적재하는 방법이다.
+
+- Paging과 같은 가상 메모리를 관리하는 기법 중 하나이다.
+- Paging은 프로세스를 물리적으로 일정한 크기로 나눠서 메모리에 할당했지만 Segmentation의 크기는 일반적으로 같지 않다. 
+- Segmentation에서의 프로세스는 세그먼트의 집합이다.
+- 프로세스를 code + data + stack 으로 나누는 것도 Segmentation의 모습이다.
+
+![img](https://user-images.githubusercontent.com/34755287/57119448-47043400-6da5-11e9-95da-91cb808de992.png)
+
+- Paging과 동일하게 d는 논리주소와 물리주소가 동일하다.
+- 물리주소 a는 base[s] + d이다.
+  - 논리주소 (2, 100) -> 물리주소 4400번지
+  - 논리주소 (1, 500) -> 인터럽트로 인해 프로세스 강제종료(범위를 벗어남)
+- Segmentation은 내부 단편화를 해결한다.
+
+
+
+### Segmentation vs Paging
+
+
+
+Segmentation은 Paging과 유사하고 보호와 공유에서는 더 나은 성능을 보여주지만 현재 대부분 Paging 기법을 이용한다.
+
+- 다중 프로그래밍에서 크기가 서로 다른 프로세스로 인해 여러 크기의 hole이 발생한다. 이로 인해 어느 hole에 프로세스를 할당하는 것에 대한 최적화 알고리즘이 존재하지 않고 외부 단편화로 인해 메모리 낭비가 크다.
+- 두 기법을 합친 세그먼트를 페이징 기법으로 나누는 기법이 탄생했다(Paged Segmentation).
+- Paged Segmentation은 Segmentation와 Paging이 동시에 존재하기 때문에 주소 변환도 두 번 해야한다. 즉, CPU에서 Segmentation 테이블에서 주소 변환을 하고 Paging 테이블에서 또 주소 변환을 하는 것이다.
+
+[Segmentation](https://velog.io/@codemcd/%EC%9A%B4%EC%98%81%EC%B2%B4%EC%A0%9COS-14.-%EC%84%B8%EA%B7%B8%EB%A9%98%ED%85%8C%EC%9D%B4%EC%85%98)
+
+
 
 
 
@@ -581,6 +693,51 @@ Blocking이면 반드시 Synchronous인 것이 아니고 Non-Blocking이면 반�
 - Spring MVC 프레임 워크는 Blocking / Sync 방식이다.
 
 [Blocking & Synchronous](https://studyandwrite.tistory.com/486?category=1004636) - 정리 중요
+
+
+
+## Mutex & Semaphore
+
+프로세스 간 메시지를 전송하거나 **공유**메모리를 통해 공유된 자원에 여러 개의 프로세스가 동시에 접근하면 critical section 문제가 발생한다.
+
+- 이를 해결하기 위해 데이터를 한 번에 하나의 프로세스만 접근할 수 있도록 제한을 두는 동기화 방식을 취한다.
+
+
+
+### Mutex
+
+동시 프로그래밍에서 공유 불가능한 자원의 동시 사용을 피하기 위해 사용하는 알고리즘이다.
+
+- Critical section을 가진 스레드들의 실행시간이 서로 겹치지 않고 각각 단독으로 실행(상호배제 : mutuak exclusion) 되도록 하는 기술이다.
+- 한 프로세스에 의해 소유될 수 있는 key를 기반으로 한 상호배제 기법이다.
+  - key에 해당하는 어떤 객체(object)가 있으며 이 객체를 소유한 스레드 / 프로세스만이 공유자원에 접근할 수 있는 것이다.
+
+- 즉, key를 가진 스레드 / 프로세스만 critical section에 접근 가능하다.
+- 도착 순서대로 이루어진다.
+
+
+
+### Semaphore
+
+멀티 프로그래밍 환경에서 공유된 자원에 대한 접근을 제한하는 방법이다.
+
+- 공통으로 관리하는 하나의 값을 이용해 상호배제를 달성한다.
+- 공유 자원에 접근할 수 있는 프로세스의 최대 허용치 만큼 동시에 사용자가 접근할 수 있다.
+- 각 프로세스는 사용할 때 세마포어 -1 나올때 세마포어 +1 한다.
+- 이미 다른 프로세스에 의해 사용중이라는 사실을 알게 되면 재시도 전에 일정 시간 대기해야 한다.
+
+
+
+### Mutex vs Semaphore
+
+- 동기화 대상의 개수
+  - Mutex는 동기화 대상이 1개일 때 사용한다.
+  - Semaphore은 동기화 대상이 1개 이상일 때 사용한다.
+- Semaphore은 Mutex가 될 수 있지만 역은 성립하지 않는다.
+
+[Mutex & Semaphore](https://worthpreading.tistory.com/90)
+
+
 
 
 
