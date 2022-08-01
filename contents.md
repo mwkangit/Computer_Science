@@ -72,6 +72,98 @@
 
 
 
+# Java 8, Java 11
+
+
+
+## Java 8
+
+- 람다 표현식의 탄생
+  - 메소드를 하나의 식으로 표현한 것을 말한다. 익명함수라고도 불린다.
+  - 가시성이 좋아진다.
+- Stream API
+  - 컬렉션의 저장 요소를 하나씩 참조해서 람다식으로 처리할 수 있도록 해주는 내부 반복자이다.
+- Optional 지원
+  - Optional을 통해 null에 대한 참조를 안전하게 할 수 있다.
+  - Optional을 통해 NPE를 얻을 상황을 손 쉽게 처리할 수 있다.
+- Interface Default Method 탄생
+  - 구현을 넣을 수 있으며 굳이 오버라이딩 하지 않아도 된다.
+
+- Garbage Collector
+  - Parallel GC 사용한다.
+
+
+
+## Java 11
+
+- Javac를 통해 컴파일 하지 않고 바로 java파일 실행 가능하다.
+- HTTP Client 기능 표준화로 전반적인 HTTP API 성능 향상했다.
+- Garbage Collector
+  - G1 GC 사용한다.
+
+[Java 8, Java 11 1](https://livenow14.tistory.com/81)
+
+[Java 8, Java 11 2](https://steady-coding.tistory.com/598)
+
+
+
+# Sort
+
+- Arrays.sort()
+  - 듀얼 피봇 퀵정렬(Dual-Pivot QuickSort)를 이용한다.
+  - 피봇을 2개를 두고 3개의 구간을 만들어 퀵정렬을 한다.
+- Collections.sort()
+  - Tim 정렬을 이용하며 삽입정렬, 병합 정렬을 결합한 형태이다.
+  - Java 7 부터 사용한다.
+- Arrays.sort() vs Collections.sort()
+  - 참조 지역성 원리 - 동일한 값 또는 해당 값의 근처에 있는 스토리지 위치가 자주 엑세스 되는 특성이다. 캐싱 전략에 영향을 미친다.
+  - Array는 연속적인 주소이므로 참조 지역성 원리에 좋다.
+  - Collection의 arraylist는 메모리간 인접하지만 linkedlist는 참조 인접성이 좋지 않아서 tim 정렬을 사용한다.
+- Heap sort는 최선의 경우 O(n), 최악의 경우 O(nlogn)이지만 참조 지역성이 좋지 않다. 즉 C * nlogn + a 에서 C 가 크게 나온다.
+- Merge sort는 인접한 덩어리를 병합하기 때문에 참조 지역성의 원리를 만족한다. 하지만 입력 배열 크기만큼의 메모리를 추가로 사용한다는 단점이 있다.
+- Quick sort는 pivot  주변에서 데이터의 위치 이동이 빈번하게 발생하기에 참조 지역성이 좋으며 메모리를 추가로 사용하지 않는다.
+- Tim sort는 삽입 정렬로 참조 지역성 원리를 만족하고 병합 정렬로 빅오의 속도를 높이는 것이다.
+
+[Sort1](https://sabarada.tistory.com/138)
+
+[Sort2](https://d2.naver.com/helloworld/0315536)
+
+
+
+# Design Pattern
+
+소프트웨어 설계시 이후에 재사용하기 좋은 형태로 설계하는 방법이다.
+
+
+
+## 생성
+
+- 싱글톤 패턴
+  - 전역 변수를 사용하지 않고 객체를 하나만 생성하도록 하며 생성된 객체를 어디서든 참조할 수 있도록 하는 패턴이다.
+- 빌더 패턴
+  - 객체를 생성하는 클래스와 표현하는 클래스를 분리하여 동일한 절차에서도 서로 다른 표현을 생성하는 방법을 제공한다.
+  - 생성자만 사용할 때 발생할 수 있는 문제를 개선한다.
+  - 필수 필드는 생성자로 주입하며 optional한 필드는 빌더 패턴으로 주입한다.
+
+
+
+## 구조
+
+- 프록시 패턴
+  - 객체를 직접적으로 참조하는 것이 아닌 해당 객체를 대항하는 객체를 통해 대상 객체에 접근하는 방식이다.
+  - 연관관계 시 Lazy 가 있다.
+
+
+
+## 행위
+
+- 옵저버 패턴
+  - 객체들 사이에 1 : N 의 의존관계를 정의하여 어떤 객체의 상태가 변할 때, 의존 관계에 있는 모든 객체들이 통지받고 자동으로 갱신될 수 있게 만드는 패턴이다.
+
+[Design Pattern](https://coding-factory.tistory.com/708)
+
+
+
 # Agile
 
 - 빠르게 취하고 낭비없게 만든는 다양한 방법론을 말한다.
