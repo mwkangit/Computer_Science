@@ -36,7 +36,25 @@
 - 도메인 모델부터 코드까지 항상 함께 움직이는 구조의 모델을 지향한다.
 - 도메인이란, SW로 해결하고자 하는 문제의 영역, 즉 만들고자 하는 서비스를 잘게 쪼개놓은 단위.
 
+
+
+- 도메인은 "정보와 활용의 영역"을 말하며 어플리케이션 로직의 기준으로 활용될 수 있다. "회원"과 같은 사항이 도메인이다.
+- DDD는 데이터가 아닌 도메인을 중심으로 설계하는 것이다.
+  - 핵심 도메인과 그 기능에 집중한다.
+  - 도메인의 모델을 정교하게 구축한다.
+  - 어플리케이션 모델을 발전시키고 새롭게 생기는 도메인 관련 이슈를 해결하기 위해 도메인 전문가와 연락한다.
+- Context란 특정 객체 혹은 상황이 벌어지는 주변 환경이다. 피자가 그릇에 있는지 바닥에 있는지에 따라 유료, 무료로 분류되는 것이라고 할 수 있다. Model에 관한 문장은 context 안에서만 이해될 수 있다.
+- Strategic Design이란 같은 사물이나 행동 양상이 벌어지는 상황에 집중하여 디자인하는 것이다. 주택을 설계하는 과정이라고 생각하면 된다.
+- Domain은 여기서 집 전체를 말한다.
+- Subdomain은 domain의 부분 집합으로 헛간, 농장, 수영장 등을 말한다.
+- Bounded Context는 subdomain의 문맥적 상황이며 위 context 예시와 유사하다. Context에 대한 구체적인 범위이다.
+- Domain Model은 subdomain의 구체적인 형상을 나타낸 것이다. Domain의 특정 양상을 묘사하는 추상화 시스템으로 도메인과 관련된 문제를 해결하는데 사용한다.
+- Ubiquitous Language는 domain model을 둘러싼 언어구조를 말하며 팀 전체각 각각의 업무 파트에서 공통적으로 사용될 수 있는 공통된 어휘이다.
+- Context Map은 bounded context들 사이의 관계를 말한다.
+
 [TDD BDD DDD](https://m.blog.naver.com/rkdudwl/221973507455)
+
+[DDD2](https://steemit.com/kr/@frontalnh/domain-driven-design)
 
 
 
@@ -314,7 +332,42 @@ AOP는 관점 지향 프로그래밍으로 객체를 추상화하여 모듈화 �
 
     ![leh_6](http://clipsoft.co.kr/wp/wp-content/uploads/2020/06/leh_6.png)
 
-[MSA](http://clipsoft.co.kr/wp/blog/%EB%A7%88%EC%9D%B4%ED%81%AC%EB%A1%9C%EC%84%9C%EB%B9%84%EC%8A%A4-%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98msa-%EA%B0%9C%EB%85%90/)
+
+
+## Spring Cloud Eureka
+
+Spring Cloud는 마이크로서비스 아키텍처를 지원하는 스프링부트를 기반으로 하는 프레임워크이다.
+
+- Spring Cloud Config Server라는 외부 저장소에 환경설정을 설정한다. 이때 외부 저장소는 Git이 된다.
+  - 이를 사용하면 각각의 마이크로서비스의 내용이 변경된다고 해도 다시 빌드하지 않아도 되고 외부저장소에 있는 환경설정만 바꿔준다면 연결되어 있는 마이크로 서비스들의 환결설정이 자동으로 변경되어 유지보수에 좋아진다.
+  - 사용 이유
+    - 첫째, 마이크로서비스의 어떠한 설정(환경변수값, Spring cloud 설정 등)이 변경되었을때 서버 재시작 없이 동적으로 적용하기 위해서이다.
+    - 둘째, 마이크로서비스가 배포될때 제반 설정값들을 배포 대상 환경(개발계, 검증계, 운영계 등)에 맞게 적용하기 위함이다.
+    - 셋째, 마이크로서비스를 Stateless하게 개발하기 위해서입니다. Stateless하게 만들어야 스케일링(마이크로서비스 인스턴스 서버 - 즉, 컨테이너의 증감)과 부담없는 재시작이 가능하기 때문이다.
+
+![img](https://blog.kakaocdn.net/dn/tsc82/btq7ixD4f5U/x6JKAVXUWBxdYiw41Yrh30/img.png)
+
+- Spring Cloud Gateway를 통해서 외부 또는 내부의 서비스에서 오는 요청이 원하는 서비스를 찾아갈 수 있다. Naming Server는 찾고자 하는 서비스의 위치를 저장한다.
+  - Tomcat이 아닌 Netty를 사용하여 비동기 WAS이고 1Thread / Many Request 방식으로 기존 방식보다 더 많은 요청을 처리한다.
+  - API Gateway는 클라이언트와 백엔드 서비스 사이에 위치하는 리버스 프록시 역할을 한다.
+  - API Gateway는 서버 최앞단에 위치하여 모든 API 호출을 받고 인증 후 적절한 서비스들에 메시지를 전달한다.
+  - 인증 및 권한, 모니터링, 로깅 등 기능도 한다.
+- Spring Cloud Eureka(Netflix OSS)는 Naming Server로 단위 서비스들에 대해 동적으로 서비스 등록(Service Registry) 및 서비스 디스커버리(Service Discovery)를 수행하고 로드밸런싱을 통해 서비스간 통신의 부하 분산 기능을 한다.
+  - Eureka는 각 서비스에서 보내는 하트비트(HeartBeat) 방식으로 상태 정보를 받아들이고 상태 점검(Health Check)를 한다.
+  - 만약 하트비트가 수신되지 않은 경우 레지스트리에서 해당 서비스 정보가 제거된다.
+  - Eureka의 부하 분산은 클라이언트-사이드 방식의 리본을 사용한다.
+
+
+
+[MSA1](http://clipsoft.co.kr/wp/blog/%EB%A7%88%EC%9D%B4%ED%81%AC%EB%A1%9C%EC%84%9C%EB%B9%84%EC%8A%A4-%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98msa-%EA%B0%9C%EB%85%90/)
+
+[MSA2](https://www.samsungsds.com/kr/insights/1239180_4627.html)
+
+[Spring Cloud Config Server](https://happycloud-lee.tistory.com/209)
+
+[API Gateway](https://m.blog.naver.com/dktmrorl/222129517689)
+
+[Spring Cloud Gateway](https://saramin.github.io/2022-01-20-spring-cloud-gateway-api-gateway/)
 
 
 
