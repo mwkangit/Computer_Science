@@ -683,3 +683,443 @@ Linux 컨테이너: 하나 이상의 프로세스 모음이며, 실행에 필요
 - 컨테이너를 포드로 구성하는 것이 바로 쿠버네티스의 유명한 기능, 복제의 토대가 된다.
 - **복제는 스케일 아웃을 말하며 포드를 기준으로 진행된다.**
 - **쿠버네티스 포드는 과부하 상태에서의 정상 작동을 지원할 뿐만 아니라 지속적으로 복제되면서 시스템의 내장애성을 제공한다.**
+
+[Kubernetes Pod](https://www.redhat.com/ko/topics/containers/what-is-kubernetes-pod)
+
+
+
+# C & Java & Python
+
+
+
+## C
+
+- 절차지향형 언어이다.
+  - 객체가 아닌 코드 들의 일련의 순서에 집중하는 것으로 유지 보수 하는 것이 어렵다.
+- 컴퍼일러 언어이다.
+  - 인터프리터 언어에 비해 실행속도가 빠르다.
+- Low Level 언어이다.
+  - 어셈블리어 수준으로 하드웨어를 제어할 수 있다.
+  - 즉, 임베디드 시스템, 운영체제, 하드웨어 제어 시스템 개발 등에 사용된다.
+- 개발자가 직접 GC를 작동해야 한다.
+  - 일일이 free() 해줘야 한다.
+  - GC 라이브러리의 제공으로 자동으로 하기도 한다.
+
+
+
+## C++
+
+- 객체지향형 언어이다.
+  - C의 문법적 체계를 그대로 계승했다.
+  - C언어에 객체 지향 개념을 도입한 것이다.
+- 컴파일러 언어이다.
+
+
+
+## Java
+
+- 객체지향 언어이다.
+  - C++과 마찬가지로 객체지향 언어이지만 설계 목표의 차이에 따른 차이가 존재한다.
+  - Java는 보안, 이식성, 빠른 개발에 비중을 두고 C++는 속도와 C와 하위 호환성에 중점을 둔다.
+- 인터프리터와 컴파일러를 모두 사용한다.
+  - Javac(Java Compiler)를 이용해 소스코드를 .class 파일로 컴파일하고 이후 JVM의 인터프리터에서 바이트코드를 한 줄씩 읽어 실행한다.
+- 웹 서비스 개발, 안드로이드 앱 개발에 사용한다.
+- GC
+  - 자동으로 주기적으로 검사하여 GC 실행한다.
+  - C++는 메모리에 직접 접근하여 명시적으로 할당을 해제하여 메모리 누수를 방지하지만 Java는 직접 메모리 영역에 접근하지 않고 JVM 가상머신을 사용하여 간접적으로 접근한다.
+  - Heap 영역은 처음 설계될 때 2가지 전제로 설계되었다.
+    - 대부분의 객체는 금방 접근 불가능한 상태(Unreachable)가 된다.
+    - 오래된 객체에서 새로운 객체로의 참조는 아주 적게 존재한다.
+  - 객체 생존 기간에 따라 물리적인 Heap 영역을 나누게 되었다.
+    - Young 영역
+      - 새롭게 생성된 객체가 할당되는 영역이다.
+      - 대부분의 객체가 금방 Unreachable 상태가 되기 때문에, 많은 객체가 Young 영역에 생성되었다가 사라진다.
+      - Young 영역에 대한 GC를 Minor GC라고 부른다.
+    - Old 영역
+      - Young 영역에서 Reachable 상태를 유지하여 살아남은 객체가 복사되는 영역이다.
+      - Young 영역보다 크게 할당되며, 영역의 크기가 큰 만큼 가비지는 적게 발생한다.
+      - Old 영역에 대한 GC를 Major GC 또는 Full GC라고 부른다.
+  - Old 영역이 Young 영역의 객체를 참조하는 경우 참조 정보가 512 bytes의 카드 테이블에 표시된다.
+    - Young 영역에서 GC가 시행될 때 모든 Old 영역에 존재하는 객체를 검사하여 참조되지 않는 Young 영의 객체를 식별하는 것이 비효율 적이므로 카드 테이블만 조회한다.\
+  - GC 작동 방식에는 2가지가 있다.
+    - Stop The World
+      - JVM이 애플리케이션의 실행을 멈추는 작업이다.
+      - GC를 실행하는 스레드를 제외한 모든 스레드들의 작업이 중단된다.
+      - GC의 성능 개선을 위해 튜닝을 한다고 하면 보통 stop-the-world의 시간을 줄이는 작업을 하는 것이다.
+    - Mark and Sweep
+      - Mark : 사용되는 메모리와 사용되지 않는 메모리를 식별하는 작업이다.
+      - Sweep : Mark 단계에서 사용되지 않음으로 식별된 메모리를 해제하는 작업이다.
+    - Stop The World를 통해 모든 작업을 중단시키면, GC는 스택의 모든 변수 또는 Reachable 객체를 스캔하면서 각각이 어떤 객체를 참조하고 있는지를 탐색하게 된다. 그리고 사용되고 있는 메모리를 식별하는데, 이러한 과정을 Mark라고 한다. 이후에 Mark가 되지 않은 객체들를 메모리에서 제거하는데, 이러한 과정을 Sweep이라고 한다.
+
+[Java GC1](https://mangkyu.tistory.com/118)
+
+[Java GC2](https://lemonlemon.tistory.com/175)
+
+
+
+## Python
+
+- 객체지향 언어, 스크립트 언어, 인터프리터 언어이다.
+  - 스크립트 언어로 컴파일 과정 없이 인터프리터에 의하여 실행된다.
+  - 즉, 컴파일 언어에 비해서는 속도가 느리다.
+- 동적 타입 언어이다.
+  - 변수의 자료형을 따로 지정하지 않고 선언하는 것만으로 값을 지정할 수 있다.
+  - 따라서 변수의 자료형은 코드가 실행되는 시점에 결정된다.
+- 플랫폼 독립적이다.
+  - 인터프리터 언어의 특징 중 하나로, 운영체제에 따라 컴파일할 필요가 없기 때문에 플래폼 독립적이다.
+  - 즉, 어느 OS에서도 바로 실행 가능하다.
+- C로 이루어져 있다.
+- 딥러닝, 빅데이터, AI에 사용한다.
+- GC
+  - 자동으로 주기적으로 검사하여 GC를 실행한다.
+  - Reference Counting
+    - 모든 객체는 참조 당할 때 이 레퍼런스 카운트를 증가시키고, 참조가 없어지면 이를 감소시킨다.
+    - 이 값이 0이 되면 객체가 메모리에서 해제된다.
+  - Generational Garbage Collection
+    - GC는 내부적으로 세대와 임계값을 통해 GC 주기와 객체를 관리한다.
+    - 0, 1, 2 세대가 있으며 생성된 객체는 0세대로 이동하고 오래된 객체는 2세대로 이동한다.
+      - (700, 10, 10) 일때 0세대이면 700번 참조, 1세대이면 7000번 참조, 2세대는 70000번 참조가 일어나면 GC가 실행되는 것이다.
+    - 순환 참조를 해결한다.
+      - 순환 참조 탐지 알고리즘을 통해 특정 세대에서 도달할 수 있는 객체를 찾는데 도달할 수 있는 객체는 세대를 아전 시키고 도달할 ㅅ후 없는 객체는 메모리에서 해제된다.
+      - 객체에 gc_refs 필드를 레퍼런스 카운트와 같게 설정한다.
+      - 각 객체에서 참조하고 있는 다른 컨테이너 객체를 찾고, 참조되는 컨테이너의 gc_refs를 감소시킨다.
+      - gc_refs가 0이면 그 객체는 컨테이너 집합 내부에서 자기들끼리 참조하고 있다는 뜻이다.
+      - 그 객체를 Unreachable하다고 표시한 뒤 메모리에서 해제한다.
+
+[Python GC](https://codediary21.tistory.com/77)
+
+[C & Java & Python](https://code-lab1.tistory.com/240)
+
+
+
+# gRPC
+
+gRPC는 구글에서 개발한 어느 환경에서 실행할 수 있는 최신 오픈 소스 고성능 RPC 프레임워크이다.
+
+- Protocol Buffer
+
+  - gRPC는 IDL(Interface Definition Language)로 Protocol Buffer을 사용한다.
+
+  - Protocol Buffer는 구조화된 데이터를 직렬화, 역직렬화 데이터 구조로 통신한다.
+
+    ![img](https://miro.medium.com/max/1400/1*PTZ_ELRZlbCZKqOBbCJ2Jg.png)
+
+    - 간단하다.
+    - 파일 크기가 3~10배 정도 작다.
+    - 속도가 20~100배 정도 빠르다.
+    - XML보다 가독성이 좋고 명시적이다.
+    - JSON은 직렬화보다 무겁고 느리다.
+    - 이진 데이터로 직렬화 된다.
+
+  - 하나의 프로그래밍 언어가 아닌 다양한 언어와 플랫폼에서 동작한다(11개 언어).
+
+    - 다양한 지원으로 비즈니스 로직 구현에만 집중할 수 있다.
+
+  - HTTP/2 기반
+
+    - 양방향 스트리밍이 가능하여 서버, 클라이언트가 동시에 데이터를 주고 받을 수 있다.
+    - HTTP/2의 헤더 압축과 protoBuf에 의한 메시지 정의에 의해 메시지 크기가 획기적으로 줄어든다.
+    - 즉, 네트워크 트래픽이 줄어드는 것을 의미한다.
+
+  - gRPC vs HTTP
+
+    | 기능                 | gRPC                                                         | JSON을 사용하는 HTTP API        |
+    | :------------------- | :----------------------------------------------------------- | :------------------------------ |
+    | 계약                 | 필수(`.proto`)                                               | 선택 사항(OpenAPI)              |
+    | 프로토콜             | HTTP/2                                                       | HTTP                            |
+    | Payload              | [Protobuf](https://docs.microsoft.com/ko-kr/aspnet/core/grpc/comparison?view=aspnetcore-6.0#performance)(소형, 이진) | JSON(대형, 사람이 읽을 수 있음) |
+    | 규범                 | [엄격한 사양](https://docs.microsoft.com/ko-kr/aspnet/core/grpc/comparison?view=aspnetcore-6.0#strict-specification) | 느슨함. 모든 HTTP가 유효합니다. |
+    | 스트리밍             | [클라이언트, 서버, 양방향](https://docs.microsoft.com/ko-kr/aspnet/core/grpc/comparison?view=aspnetcore-6.0#streaming) | 클라이언트, 서버                |
+    | 브라우저 지원        | [아니요(gRPC-웹 필요)](https://docs.microsoft.com/ko-kr/aspnet/core/grpc/comparison?view=aspnetcore-6.0#limited-browser-support) | 예                              |
+    | 보안                 | 전송(TLS)                                                    | 전송(TLS)                       |
+    | 클라이언트 코드 생성 | [예](https://docs.microsoft.com/ko-kr/aspnet/core/grpc/comparison?view=aspnetcore-6.0#code-generation) | OpenAPI + 타사 도구             |
+
+- Stub
+  - Stub는 RPC의 핵심 개념으로 Parameter 객체를 Message로 Marshalling/Unmarshalling하는 레이어이다.
+  - 서버와 클라이언트는 서로 다른 주소 공간을 사용하므로 함수 호출에 사용된 매개 변수를 꼭 변환해줘야 한다. 그렇지 않으면 메모리 매개 변수에 대한 포인터가 다른 데이터를 가리키게 되기 때문이다.
+    - Marshalling : 직렬화된 객체를 바이트 단위로 분해한다.
+    - Unmarshalling : 전송받은 데이터를 원래대로 복구한다.
+    - client의 stub은 함수 호출에 사용된 파라미터의 변환(marshalling) 및 함수 실행 후 서버에서 전달된 결과의 변환 담당한다.
+    - server의 stub은 클라이언트가 전달한 매개 변수의 역변환(unmarshalling) 및 함수 실행 결과 변환을 담당한다.
+
+- MSA
+  - ProtoBuf가 지원하는 IDL 활용한 서비스 및 메시지 정의는 MSA의 다양한 기술 스택의 공존으로 인한 중복 발생의 단점을 보완하고, 수많은 서비스간의 API 호출로 인한 성능 저하를 개선한다.
+  - ProtoBuf는 다양한 언어와 플랫폼을 지원하여 언어에 구애받지 않고, 원격에 있는 프로시저를 호출하여 고유 프로그램의 개발에 집중할 수 있게한다.
+  - 내부 요청이 많은 MSA에서 ProtoBuf로 요청 처리 시간 감소는 매우 중요하다.
+
+[gRPC1](https://chacha95.github.io/2020-06-15-gRPC1/)
+
+[gRPC2](https://velog.io/@dojun527/gRPC%EB%9E%80)
+
+[gRPC vs HTTP](https://docs.microsoft.com/ko-kr/aspnet/core/grpc/comparison?view=aspnetcore-6.0)
+
+[gRPC MSA1](https://tech.buzzvil.com/blog/tech-blog-grpc%EB%A5%BC-%EC%93%B0%EB%A9%B4-rest%EA%B0%80-%EA%B3%B5%EC%A7%9C/)
+
+[gRPC MSA2](https://medium.com/@goinhacker/microservices-with-grpc-d504133d191d)
+
+[Data Serialization](https://hub1234.tistory.com/26)
+
+
+
+# CRDT
+
+여러 사용자가 동시에 사용할 수 있도록 하는 서비스이다.
+
+- 동시편집에는 OT, CRDT가 있으며 공통적으로 다수의 사용자가 모두 같은 상태를 유지해야 한다는 조건이 있다.
+
+
+
+## OT
+
+Operational Transformation이다.
+
+- 클래식한 동시 편집 방법으로 Google Docs에서 이용한다.
+
+- 예
+
+  ![img](https://s3.ap-northeast-2.amazonaws.com/zoyi-ghost/kr/2021/04/crdt_vs_ot_ot___________4-1617612847570.png)
+
+  - !이 먼저 적용되면 그대로 l을 3번 인덱스에 넣으면 된다.
+  - l이 먼저 적용된 경우 !는 4번 인덱스였지만 서버에서 조절하여 5번 인덱스에 넣는다. 즉, 다른 실시간 반영된 operation에 의해 삽입 위치를 바꿔야 하므로 Operation Transformation이라고 부른다.
+  - 단점
+    - 모든 요청은 하나의 서버를 통하게 되어있다.
+      - 위에 설명한 서버에서 동시 요청에 대한 반영에 대한 알고리즘을 적용하여 반영해야 하기 때문이다.
+      - 즉, 같은 와이파이를 사용해도 바로 반영하지 못하고 Google 서버와 통신해야 한다.
+      - CRDT는 서버를 반드시 거쳐야되는 네트워크를 방지하여 모든 channel을 사용할 수 있다.
+
+
+
+## CRDT
+
+Conflict
+
+- 기본 개념이 적용된 CRDT를 개발하는 것은 쉽지만 예상한 정확한 결과를 도출하는 CRDT를 개발하는 것은 어렵다.
+
+
+
+### Interleaving Anomalies
+
+![img](https://s3.ap-northeast-2.amazonaws.com/zoyi-ghost/kr/2021/04/crdt_vs_ot_crdt___________-1617612861067.png)
+
+- OT의 서버 접근을 방지하기 위해 CRDT는 인덱스가 아닌 Unique Indentifier(식별자)을 사용한다. 간단한 예로 소수를 사용할 수 있다.
+- 이 식별자는 각 문자마다 정적으로 할당되며 CRUD가 행해져도 그대로 유지된다.
+- 배열의 2번째 인자인 'A'는 노드(사용자)를 의미하며 서로 다른 노드ID가 같은 번호를 선택 시 순서를 정해주는 용도로 사용한다.
+
+![img](https://s3.ap-northeast-2.amazonaws.com/zoyi-ghost/kr/2021/04/crdt_vs_ot_crdt________1-1617612875238.png)
+
+![img](https://s3.ap-northeast-2.amazonaws.com/zoyi-ghost/kr/2021/04/crdt_vs_ot_crdt________2-1617612881030.png)
+
+- 하지만 식별자를 사용해도 동시에 같은 지점에 데이터 삽입 시 충돌이 일어나게 된다.
+- 이러한 문제를 방지하기 위해 식별자로 범위 안의 랜덤 숫자를 사용하기도 한다.
+
+![img](https://s3.ap-northeast-2.amazonaws.com/zoyi-ghost/kr/2021/04/crdt_vs_ot_crdt________-1617612888999.png)
+
+- Treedoc, WOOT는 가장 안전한 알고리즘이지만 식별자로 인해 많은 메모리 공간을 차지하게(비효율적임) 되어 LSEQ 알고리즘이 나왔지만 좋은 결과는 도출하지 못했다.
+
+- Logoot, LSEQ는 interleaving이 발생하여 text editing에 좋지 않다.
+
+- Astrong도 마찬가지이다.
+
+- RGA 적은 interleaving이며 Treedoc, WOOT보다 효율적이다.
+
+- RGA
+
+  ![스크린샷 2022-08-22 오후 5.22.53](/Users/mwkang/Desktop/스크린샷 2022-08-22 오후 5.22.53.png)
+
+  ![image-20220822174632596](/Users/mwkang/Library/Application Support/typora-user-images/image-20220822174632596.png)
+
+  - 각각의 문자의 부모는 직전에 입력된 문자가 된다(LinkedList처럼 적용됨).
+  - 커서가 움직이면 새로운 sub tree가 생성된다. 이 트리의 순서는 깊이 우선이다.
+    - 서브 트리를 접근하는 순서는 모든 노드에 저장된 타임스탬프로 판별한다.
+  - 타임스탬프는 동시편집에서 판별이 어렵기 때문에 좌측 아래의 3가지 결과가 도출될 수 있다.
+  - 즉, 위의 글자 하나하나 식별하던 방법보다는 더 정확한 동시편집이 된다.
+  - 하지만 글자 하나하나 식별하던 문제가 발생할 수 있긴 하다.
+    - 즉, 사용자가 단어를 가장 뒷글자부터 하나하나 작성하면서 커서를 바꾸면 발생한다.
+
+  - 단어에 식별자를 부여하는 방법이다. 즉, 글자가 섞이지는 않는다.
+  - 물론 3가지 결과가 도출되지만 RGA에서 이 3가지 중 요구했던 결과를 도출하는 알고리즘이 2019년에 생성되었다.
+
+
+
+### Moving (reordering) List Items
+
+단어를 생성, 삭제하는 것이 아닌 위치(순서)를 바꾸는 것이다.
+
+![image-20220822174943176](/Users/mwkang/Library/Application Support/typora-user-images/image-20220822174943176.png)
+
+- "삭제 후 다시 삽입"을 이용하면 3번의 단어는 사라지지만 모두 1번자리에 삽입하여 중복이 발생한다.
+
+![image-20220822175804581](/Users/mwkang/Library/Application Support/typora-user-images/image-20220822175804581.png)
+
+![image-20220822175932728](/Users/mwkang/Library/Application Support/typora-user-images/image-20220822175932728.png)
+
+- 두 사용자가 같은 문자를 다른 위치로 이동 시 문제가 발생한다.
+  - 이때 둘다 적용하면 이전과 같이 중복이 발생하는 것이다.
+- 두 명령 중 하나의 명령만 반영하는 방법을 선택한다.
+- 즉, 마지막에 명령한 사용자의 명령이 반영된다.
+- 이때에도 이전의 알고리즘을 사용하여 단어를 옮긴다.
+- Set에 옮기려는 단어들의 순서를 저장한 후 CRDT로 옮긴다.
+  - Set에는 Last Writer Win Resgister로 마지막 사람이 옮기려는 위치가 저장된다.
+- 즉, RGA 알고리즘, AtWin Set, Last Writer Win Register를 적용하여 현재의 문제를 해결한다.
+
+![image-20220822181219106](/Users/mwkang/Library/Application Support/typora-user-images/image-20220822181219106.png)
+
+![image-20220822181234157](/Users/mwkang/Library/Application Support/typora-user-images/image-20220822181234157.png)
+
+- 한 사용자는 한 부분을 옮기며 다른 사용자는 그 부분을 수정할 때 문제가 발생한다.
+- 이 문제는 아직 해결되지 못했다.
+
+
+
+### Moving Subtrees of a Tree
+
+리스트가 아닌 트리의 위치를 변경하는 것이다.
+
+![image-20220822182755950](/Users/mwkang/Library/Application Support/typora-user-images/image-20220822182755950.png)
+
+- A 트리를 각 사용자가 B, C로 옮기는 과정이다.
+- (a)는 중복이며 (b)는 트리구조가 파괴되므로 사용하지 않는다.
+- (c), (d)가 합리적이며 이전의 Last Writer Win을 적용한다.
+
+![image-20220822183129169](/Users/mwkang/Library/Application Support/typora-user-images/image-20220822183129169.png)
+
+- 트리를 옮기는 예이며 파일 시스템이 관련된 것이다.
+- a디렉토리 내부에 b디렉토리가 있는데 a디렉토리를 b디렉토리로 옮기려는 시도로 Mac OS 등 이러한 것은 사이클이 생기며 오류를 발생한다.
+
+![image-20220822183929584](/Users/mwkang/Library/Application Support/typora-user-images/image-20220822183929584.png)
+
+- 서로를 부모 노드라고 변경하여 사이클이 발생하는 경우이다.
+- 이때에도 (c)나 (d)를 선택하는 것이 좋다.
+- 구글 드라이브도 이 사항은 해결하지 못하여 에러 메시지를 출력한다.
+
+![image-20220822184448448](/Users/mwkang/Library/Application Support/typora-user-images/image-20220822184448448.png)
+
+- Lamport 타임스탬프와 같은 것으로 각 요청을 안전하게 수행할 수 있다고 가정한 후 요청을 병합하는 과정이다.
+- 이때 A B는 safe하지만 이미 변한 트리구조로 인해 B A는 unsafe하다.
+- 이때 B A 요청은 무시하고 undo 하는 것이 맞다.
+
+![image-20220822184728923](/Users/mwkang/Library/Application Support/typora-user-images/image-20220822184728923.png)
+
+- 위의 상황을 해결하기 위해 요청들을 모아서 타임스탬프 순서로 적용해야 한다.
+- 이때 Replica 1은 t1, t3, t4, t5를 실행했는데 t2가 t3, t4, t5보다 선행되어야 하므로 undo 과정을 거쳐야 한다. 그 후 병합을 수행한다.
+
+![image-20220822230253403](/Users/mwkang/Library/Application Support/typora-user-images/image-20220822230253403.png)
+
+- 3개의 replica가 서로 멀리 위치해도 초당 600개의 트리 위치 변경을 해결한다.
+
+![image-20220822230916194](/Users/mwkang/Library/Application Support/typora-user-images/image-20220822230916194.png)
+
+- LogEntry 구조체를 생성하여 위치 변경 이전의 parent Node, metadata를 저장하여 undo 가 가능하도록 한다.
+
+![image-20220822232351284](/Users/mwkang/Library/Application Support/typora-user-images/image-20220822232351284.png)
+
+- 현재 적용한 알고리즘에 대한 전제이다.
+- 모든 트리는 부모 식별자가 있으며 이것으로 사이클 발생을 방지한다.
+- CRDT로 서로 같은 결과를 공유한다.
+
+
+
+### Reducing Metadata Overhead of CRDTs
+
+![image-20220823003156949](/Users/mwkang/Library/Application Support/typora-user-images/image-20220823003156949.png)
+
+- 다양한 metadata가 생성되어 데이터로 전송된다.
+
+![image-20220823003235838](/Users/mwkang/Library/Application Support/typora-user-images/image-20220823003235838.png)
+
+- 옛 버전은 JSON을 사용하여 인코딩하고 네트워크를 통해 디스크에 저장하지만 JSON은 매우 장황하다.
+- 모든 add, delete 등 기록을 binary 인코딩으로 변경하여 200배 정도 사이즈를 줄였다. protobuf의 경우 3배정도만 빨라질 것이다. 200배 사이즈 감소를 위해서는 CRDT에 맞는 포맷의 binary로 인코딩해야 한다.
+- 커서 위치는 저장하지 않아도 되므로 없애면 22% 사이즈 감소한다. 여기까지 사용하자.
+- 변경 히스토리마저 지우면 150% 사이즈 감소한다.
+- TombStone을 삭제하면 이전의 기록과 merge를 할 수 없지만 추가로 48% 사이즈 감소한다.
+- 마지막은 그냥 raw data로 아무 메타데이터가 없는 것이다.
+
+![image-20220823005006826](/Users/mwkang/Library/Application Support/typora-user-images/image-20220823005006826.png)
+
+- 모든 입력은 Set으로 저장한다.
+- 유니크 식별자는 Lamport Timestamp를 이용한다.
+- 각 입력은 이전의 ID(Lamport TimeStamp)를 참조한 후 입력된다.
+- 모든 입력 요청은 문자 순서(문서 정렬)로 저장된다.
+
+![image-20220823005537619](/Users/mwkang/Library/Application Support/typora-user-images/image-20220823005537619.png)
+
+- Lamport TimeStamp를 인코딩하는 것으로 1씩 증가하였으므로 Run-Length Encoding으로 111111이 (6,1)로 압축된다.
+
+![image-20220823005711608](/Users/mwkang/Library/Application Support/typora-user-images/image-20220823005711608.png)
+
+- Actor은 원래 UUID로 16바이트이며 lookup table을 통해 작게 매핑한다.
+- 그 후 동일하게 Run-Length Encoding 방법을 적용한다.
+
+![image-20220823010550923](/Users/mwkang/Library/Application Support/typora-user-images/image-20220823010550923.png)
+
+- 길이, 문자를 인코딩 후 concat만 하여 추가한다.
+- 길이는 분리할 때도 사용한다.
+
+![image-20220823011304055](/Users/mwkang/Library/Application Support/typora-user-images/image-20220823011304055.png)
+
+- TimeStamp, ID(UUID) 범위 metadata를 추가하여 히스토리를 정확하게 기록할 수 있다.
+
+[CRDT](https://www.youtube.com/watch?v=x7drE24geUw&t=3s)
+
+
+
+# Yorkie vs Yes
+
+
+
+## Basic Aspects
+
+- Yjs
+  - Yjs는 P2P 모델로 설계되어 있음
+  - Yjs는 `Array`, `Map`, `Text`, `XmlElement` 등의 다양한 Shared Types를 지원함
+  - Yjs는 다양한 Editor들에 대한 Binding들을 제공하면서, 다양한 형태로 통신할 수 있도록 Providers 들을 제공하고 있음
+  - Yjs는 추상화가 잘 되어 있으면서 다양한 모듈들을 제공해서, 코드 몇줄로 쉽게 CRDT 기술을 적용할 수 있었음
+- Yorkie
+  - Yorkie는 전통적인 Client-Server 모델로 설계되어 있음
+  - Yorkie는 `PlanText`, `RichText`, `JSONArray` 등의 text 기반의 Shared Types를 지원하는 것 같음
+  - CRDT 기술의 핵심에 가까운 API들을 제공하고 있음 (쉽게 사용할 수 있도록 추상화가 덜 되어 있는 것 같음)
+
+
+
+## Flow (Diagram)
+
+- High-Level Flow
+  - Yorkie
+    - Clients (Changes) → gRPC → Server → gRPC → Clients (Propagates)
+  - Yjs
+    - WebRTC (P2P)
+      - Clients (Changes, Propagates) ↔ Clients (Changes, Propagates)
+    - WebSocket (Client-Server)
+      - Clients (Changes) → WebSocket → Server → WebSocket → Clients (Propagates)
+
+
+
+## Front-End
+
+
+
+### Usability
+
+- Yjs는 `Y.Map` 이라는 Shared Types를 지원함. 이는 key-value 형태의 Map 자료구조를 기반으로 하고 있어, `ymap.set(key, value)`, `ymap.get(key)`, `ymap.delete(key)` 등의 API들을 제공해줌
+  - tldraw + Yjs로 실시간 화이트보드를 빌드할 때는 Map 자료구조로 쉽게 화이트보드 위의 shape들을 set하고 delete 할 수 있었음
+- Yorkie의 canvas 예제를 빌드할 때는 `JSONArray`가 이용되어 root → shapes → points → point 의 중첩된 형태로 캔버스 위의 shape들을 저장하는 형태로 진행되었음
+  - `JSONArray` 의 `deleteByID(ID: TimeTicket)`로 shape들을 삭제할 수 있을 것 같았음
+
+
+
+## Back-End
+
+- Yorkie에서 docker-compose 파일을 제공해줘서 쉽게 Docker Container로 올릴 수 있음
+- Yorkie Docs 에서 Server for Web, Auth Webhook, Monitoring Server, Cluster Mode 등 백엔드 단의 여러 tasks 들을 설명해주고 있어서 쉽게 백엔드를 빌드 할 수 있었음
+
+
+
+## Docs
+
+- 사용성
+  - 전체적으로 reference, 자료가 부족함
+- 건의사항
+  - Search: 자료 검색 기능
+  - API: API 문서를 Documentation의 목차에서 바로 볼 수 있으면 API를 더욱 쉽게 찾을 수 있을 것 같음
+
+[Yorkie vs Yjs](https://www.notion.so/Yorkie-vs-yjs-e26221241d934c44a1f16800a96650b7)
