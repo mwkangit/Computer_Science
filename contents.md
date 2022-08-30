@@ -1063,6 +1063,34 @@ Conflict
 
 
 
+# Lamport Timestamp
+
+Locgical clock에서 중요하게 생각하는 것은 각 이벤트 간의 인과관계다. 즉 사건 A가 사건 B보다 먼저 발생했다는 것이 중요하지, 사건 A가 B보다 얼마나 빨리 발생 했느냐 같은 것은 고려 대상이 아니다.
+
+Lamport Timestamp는 논리 시간으로 각 프로세스의 이벤트 발생 시간을 동기화하는 것이다.
+
+![img](https://blog.kakaocdn.net/dn/bgvrnf/btrexekPSCx/cZpbkv2DrI92UAxxMouwyk/img.jpg)
+
+- Lamport Timestamp Rule
+
+  - **clock counter는 각 이벤트가 발생하기 전에 증가한다.**
+
+  - 프로세스가 메시지를 보낼 때, 메시지에 clock counter 값을 같이 보낸다.
+
+  - **메시지가 도착하면 받은 clock counter와 자신이 가지고 있던 clock counter를 비교하여 자신이 가진 것이 크다면 그대로 유지하고, 새로 도착한 것이 더 크다면 새로운 clock counter에 1을 증가시킨 것을 자신의 clock couter로 셋팅한다.**
+
+- Lamport Timestamp 주의사항
+
+  - 하나의 프로세스에서 두 개의 사건이 발생하는 간격이 tick이 터지는 간격보다 더 빠르다면, 시간 구분을 할 수 없고 인과관계가 엉망이 된다. **Tick의 발생 주기는 이벤트의 발생 주기보다 짧아야 한다.**
+- 두개의 프로세스에서 동일한 시간에 이벤트를 발생 시켜버린다면 역시 시간 구분을 할 수 없고 인과관계가 엉망이 되어버린다. 그래서 모든 시간의 소수점 이하로 프로세스의 번호를 붙여 다른 프로세스에서 같은 시간을 발생 시킬 수 없도록 한다. **즉, 동일 시간 이벤트 발생 시 프로세스의 번호에 따라 우선순위를 두는 것이다.**
+
+
+[Lamport Timestamp](https://kukuta.tistory.com/105)
+
+
+
+
+
 # Yorkie vs Yjs
 
 
