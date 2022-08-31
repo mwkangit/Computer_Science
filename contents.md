@@ -1063,6 +1063,34 @@ Conflict
 
 
 
+# RGA
+
+Woot : Identifier는 피어의 아이디와 삽입시 좌우측의 두 앨리먼트에 대한 링크로 구성된다. 각 요소의 위치가 이웃 요소와 관계에 의해 결정되므로 완전히 삭제하기가 어려워서 tombstone을 사용한다.
+
+TreeDoc : 요소의 비균형 이진 탐색트리로 요소의 identifier는 트리에서의 path이다. 비균형 트리로 문서의 끝에 계속해서 텍스트를 입력할 경우, 균형이 깨져서 고비용이 발생한다. 모든 피어를 동기화 해야하므로 균형 잡기 어렵다. Tombstone을 사용하지만, 특정 조건에서 제거 가능하다.
+
+Logoot : 어휘 순서를 사용해서 문서의 요소의 순서를 잡는다. Identifier는 3개의 정수형 튜플(1: 우선순위, 2: Upstream 피어 ID, 3: Upstream 논리 시계)의 리스트이다. Identifier는 배열에 저장되며, 새로운 요소 삽입을 위해서는 배열의 shift가 발생한다.
+
+RGA : 문서에서 모든 요소는 특정 요소 뒤에 추가된다는 점을 이용한다. RGA 자료구조는 링크드 리스트로 각 요소는 내용과 다음 요소의 링크, tombstone으로 구성된다. Identifier는 피어ID, sum(삽입 중 upstream 벡터 시계의 합)으로 구성된다. Identifier의 순서는 피어 ID와 sum으로 판단된다.
+
+
+
+![screen shot 2018-09-07 at 2 27 56 pm](https://hackerwins.github.io/assets/img/2018-09-14-high-responsiven/fe21ad0c-b50e-11e8-90df-507ecf589d46)
+
+- 스텝 1: 사용자 액션
+- 스텝 2: 사용자의 액션으로부터 Identifier 자료구조를 사용해서 Node를 조회
+- 스텝 3-5: 본 알고리즘과 동일한 복제 과정
+- 스텝 6-7: 원격 오퍼레이션을 받아서 로컬 Identifier 자료구조를 업데이트
+
+idNode는 Node를 참조를 갖고 있고 반대로 Node는 idNode의 참조를 갖고 있다.
+
+CRDT Identifier 조회하기
+
+- RGA와 WOOT, LogooSplit에서 문서의 노드를 조회할 때 시작작 노드부터 찾는 위치의 노드를 만날때 까지 선형탐색 한다(O(N)).
+- Identifier 자료구조는 사용자의 수정 위치를 입력받아서 CRDT identifier를 빠르게 찾는 역할을 한다. Identifier가 순서를 갖고 있다면, Identifier 자료구조는 스킵 리스트와 같은 SortedMap이거나 혹은 weighted binary tree가 될 수 있다.
+
+
+
 # Lamport Timestamp
 
 Locgical clock에서 중요하게 생각하는 것은 각 이벤트 간의 인과관계다. 즉 사건 A가 사건 B보다 먼저 발생했다는 것이 중요하지, 사건 A가 B보다 얼마나 빨리 발생 했느냐 같은 것은 고려 대상이 아니다.
